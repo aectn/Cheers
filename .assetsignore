@@ -1,0 +1,12 @@
+# 上传静态资源时要排除的文件
+# Workers 不会像 Pages 那样自动排除这些，不写就会被一起传上去
+node_modules
+.git
+.github
+.DS_Store
+Thumbs.db
+desktop.ini
+*.map
+.env
+.env.*
+*.log

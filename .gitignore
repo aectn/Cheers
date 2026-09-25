@@ -1,0 +1,23 @@
+# 依赖
+node_modules/
+package-lock.json
+
+# Wrangler 构建产物与本地状态
+dist/
+.wrangler/
+.dev.vars
+.mf metrics
+
+# 环境变量 / 密钥（本项目暂无，但防止误提交）
+.env
+.env.*
+!.env.example
+
+# 系统杂项
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 日志
+*.log
+npm-debug.log*

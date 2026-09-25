@@ -1,0 +1,20 @@
+# =============================================================================
+# Cloudflare Workers Static Assets — 响应头配置
+# =============================================================================
+# 这里定义的头会下发给所有响应。
+# 注意：不要试图在 Worker 代码里加响应头 —— 静态资源直出不经过 Worker。
+# =============================================================================
+
+# ---- 全站安全头 ----
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+# ---- 静态资源（CSS / JS / 图片）：长期缓存 ----
+# 注意 assets/js/config.js 也在这一范围内。
+# 联系方式变更后如需立即生效，改完请重新部署并刷新缓存即可（文件名未变也可能命中旧缓存，
+# 届时可在 CF 控制台执行一次 Purge Everything）。
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
