@@ -1,6 +1,7 @@
 # 依赖
 node_modules/
-package-lock.json
+# 注意：package-lock.json 必须提交 —— Cloudflare Workers Builds 会执行 npm ci，
+# 缺了这个文件会导致构建失败（本项目无依赖，lock 文件很小）
 
 # Wrangler 构建产物与本地状态
 dist/
