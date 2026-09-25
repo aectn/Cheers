@@ -123,8 +123,41 @@ npx wrangler deploy     # 或 npm run deploy
 
 **6. 绑域名**：按下面的 DNS + 路由 + 证书流程走。
 
-> **替代方案**：在 CF 控制台用 **Workers Builds** 连接 Git 仓库，**构建命令留空、输出目录填 `public`**。配好后每次推 Git 自动部署（约 40 秒），适合交给社团同学维护。
-> 两种方法可以共存，但不要同时对同一个 Worker 用，避免互相覆盖。
+### 方式 C：Workers Builds 连 Git（社团长期维护推荐）
+
+配好之后，**同学改内容推 GitHub → 约 40 秒自动上线**，不用装任何环境。
+
+**控制台操作（中文界面）**
+1. **Workers 和 Pages** → **创建**
+2. 选 **连接到 Git**（或「导入存储库」）
+3. 授权 GitHub 账号，选中本仓库
+4. 配置：
+   - 项目名称：`qisi-site`
+   - **构建命令：留空**（纯静态站点不需要构建）
+   - **部署命令：`npx wrangler deploy`**（默认，会读取仓库根目录的 `wrangler.toml`）
+   - 根目录：`/`
+5. 保存并部署 → 得到 workers.dev 地址，先验证页面正常
+
+> ⚠️ **建议新建一个 Worker 来做 Git 部署**，不要在「控制台上传」创建的那个项目上直接启用。
+> 两种部署模型不同，混用容易冲突。新项目验证通过后再把路由切过来。
+
+**切换路由（重要）**
+
+同一个主机名 `cheers.aectn.top/*` **只能绑定一个 Worker**，切换顺序必须是：
+
+1. 新 Worker 部署成功，用它的 workers.dev 地址确认 5 个页面都正常
+2. **旧 Worker** → 设置 → 域和路由 → 删掉 `cheers.aectn.top/*` 那条
+3. **新 Worker** → 设置 → 域和路由 → 添加 → 选**路由** → 填 `cheers.aectn.top/*`
+4. 立即生效，**DNS 记录不用动**（灰云 + 优选 IP 保持不变）
+
+**仓库信息**
+
+| 项 | 值 |
+| --- | --- |
+| 仓库地址 | **https://github.com/aectn/Cheers** |
+| 分支 | `main` |
+| 自动部署 | 推送后约 40 秒 |
+| 维护人 | aectn（建议后续转社团公共账号，避免毕业失联） |
 
 **DNS 记录（CF 控制台 → DNS）**
 
@@ -297,9 +330,13 @@ qrContact:  "assets/img/qr-official.png" // 官号二维码
 
 | 项 | 值 |
 | --- | --- |
-| 域名 | `cheers.aectn.top`（NameSilo 注册，已 NS 托管到 Cloudflare） |
+| 正式域名 | `cheers.aectn.top`（NameSilo 注册，已 NS 托管到 Cloudflare） |
+| Workers 预览地址 | `cheers.affection2024.workers.dev` |
+| 代码仓库 | **https://github.com/aectn/Cheers** |
 | Cloudflare 账号 | 暂用个人账号，后续迁移成本低 |
-| 代码仓库 | 待建（建议用社团公共账号，避免毕业失联） |
 | 成本 | ¥0（仅域名续费） |
+
+> 📌 `workers.dev` 那条地址是部署后自动生成的预览入口，**正式对外只用 `cheers.aectn.top`**。
+> 如果上面这条预览地址打不开，核对一下是不是少了个 `r`（应为 `workers.dev` 而非 `works.dev`）。
 
 **交接时必须移交**：CF 账号、Git 仓库地址、本文档、DNS 配置截图。
