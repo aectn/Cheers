@@ -23,6 +23,10 @@ directory = "./public"
 # 未匹配到文件时，返回同目录下最近的 404.html
 not_found_handling = "404-page"
 
+# 预览部署（Pull Request 场景）需要这个块，内容可以为空。
+# 缺失会导致 `npx wrangler preview` 报错：missing a `previews` block
+[previews]
+
 # 🚫 红线：不要加 run_worker_first = true
 #    一旦开启，所有请求都会先执行一遍 Worker 代码，
 #    「静态资源免费无限」的优势立刻归零（详见 README.md 第 3、4 节）。
