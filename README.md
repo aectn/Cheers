@@ -58,6 +58,14 @@
 > 一句话：**免费的不是"CF 上的数据"，是"没有跑代码的请求"。**
 > 本项目实际配额消耗 **≈ 0**。
 
+**Workers Observability（日志）已开启**
+
+- 控制台开启后已写进 `wrangler.toml`（`[observability] enabled = true`），重新部署不会被覆盖。
+- 免费额度：**每天 20 万条日志、保留 7 天**；超额只是停止记录，**不影响站点访问**。
+- 重要：开启日志**不会**让请求改走 Worker 代码，也**不**消耗「10 万请求/天」配额——它是运行时旁路采集。本项目命中 assets 直出，几乎不产生日志，所以这条额度等于用不完。
+- 用途：以后有人反馈「某页面打不开」，可在 **Workers 和 Pages → cheers → 日志（Observability）** 直接看是 404 还是别的错误，不用猜。
+- 查看入口：控制台搜 `observability` 或 `日志`；或 Worker 详情页的「日志」标签。
+
 ## 5. 部署配置
 
 **三种上传方式，选一条走，不要混用**
@@ -123,8 +131,50 @@ npx wrangler deploy     # 或 npm run deploy
 
 **6. 绑域名**：按下面的 DNS + 路由 + 证书流程走。
 
-> **替代方案**：在 CF 控制台用 **Workers Builds** 连接 Git 仓库，**构建命令留空、输出目录填 `public`**。配好后每次推 Git 自动部署（约 40 秒），适合交给社团同学维护。
-> 两种方法可以共存，但不要同时对同一个 Worker 用，避免互相覆盖。
+### 方式 C：Workers Builds 连 Git（社团长期维护推荐）
+
+配好之后，**同学改内容推 GitHub → 约 40 秒自动上线**，不用装任何环境。
+
+**控制台操作（中文界面）**
+1. **Workers 和 Pages** → **创建**
+2. 选 **连接到 Git**（或「导入存储库」）
+3. 授权 GitHub 账号，选中本仓库
+4. 配置：
+   - 项目名称：`qisi-site`
+   - **构建命令：留空**（纯静态站点不需要构建）
+   - **部署命令：`npx wrangler deploy`**（默认，会读取仓库根目录的 `wrangler.toml`）
+   - 根目录：`/`
+5. 保存并部署 → 得到 workers.dev 地址，先验证页面正常
+
+> ⚠️ **建议新建一个 Worker 来做 Git 部署**，不要在「控制台上传」创建的那个项目上直接启用。
+> 两种部署模型不同，混用容易冲突。新项目验证通过后再把路由切过来。
+
+**切换路由（重要）**
+
+同一个主机名 `cheers.aectn.top/*` **只能绑定一个 Worker**，切换顺序必须是：
+
+1. 新 Worker 部署成功，用它的 workers.dev 地址确认 5 个页面都正常
+2. **旧 Worker** → 设置 → 域和路由 → 删掉 `cheers.aectn.top/*` 那条
+3. **新 Worker** → 设置 → 域和路由 → 添加 → 选**路由** → 填 `cheers.aectn.top/*`
+4. 立即生效，**DNS 记录不用动**（灰云 + 优选 IP 保持不变）
+
+**Preview URLs（预览链接）——建议开启**
+
+开启后每个 PR / 分支都会生成一个独立的临时网址，不用合并就能看到真实效果，
+方便社团同学「改完先验收、确认没问题再合并」。免费，不额外消耗配额。
+
+- 开启入口：PR 页面里那个 **Enable** 链接，或控制台 **设置** 中找「Preview URLs」
+- ⚠️ 注意：预览 URL **公开可访问**。招新官网内容本来就对外，无妨；
+  但如果某个分支上有暂不想公开的内容，别发到该分支
+
+**仓库信息**
+
+| 项 | 值 |
+| --- | --- |
+| 仓库地址 | **https://github.com/aectn/Cheers** |
+| 分支 | `main` |
+| 自动部署 | 推送后约 40 秒 |
+| 维护人 | aectn（建议后续转社团公共账号，避免毕业失联） |
 
 **DNS 记录（CF 控制台 → DNS）**
 
@@ -297,9 +347,13 @@ qrContact:  "assets/img/qr-official.png" // 官号二维码
 
 | 项 | 值 |
 | --- | --- |
-| 域名 | `cheers.aectn.top`（NameSilo 注册，已 NS 托管到 Cloudflare） |
+| 正式域名 | `cheers.aectn.top`（NameSilo 注册，已 NS 托管到 Cloudflare） |
+| Workers 预览地址 | `cheers.affection2024.workers.dev` |
+| 代码仓库 | **https://github.com/aectn/Cheers** |
 | Cloudflare 账号 | 暂用个人账号，后续迁移成本低 |
-| 代码仓库 | 待建（建议用社团公共账号，避免毕业失联） |
 | 成本 | ¥0（仅域名续费） |
+
+> 📌 `workers.dev` 那条地址是部署后自动生成的预览入口，**正式对外只用 `cheers.aectn.top`**。
+> 如果上面这条预览地址打不开，核对一下是不是少了个 `r`（应为 `workers.dev` 而非 `works.dev`）。
 
 **交接时必须移交**：CF 账号、Git 仓库地址、本文档、DNS 配置截图。
