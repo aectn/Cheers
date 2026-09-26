@@ -6,6 +6,9 @@ node_modules/
 # Wrangler 构建产物与本地状态
 dist/
 .wrangler/
+
+# Astro 生成缓存（构建时自动重新生成，无需提交）
+.astro/
 .dev.vars
 .mf metrics
 

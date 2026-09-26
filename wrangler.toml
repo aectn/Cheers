@@ -17,8 +17,9 @@ name = "cheers"
 compatibility_date = "2026-09-25"
 
 # 静态资源目录：这个文件夹里的内容会被上传到 Cloudflare
+# Mizuki(Astro) 构建产物输出到 ./dist
 [assets]
-directory = "./public"
+directory = "./dist"
 
 # 未匹配到文件时，返回同目录下最近的 404.html
 not_found_handling = "404-page"
