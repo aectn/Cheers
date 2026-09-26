@@ -158,14 +158,21 @@ npx wrangler deploy     # 或 npm run deploy
 3. **新 Worker** → 设置 → 域和路由 → 添加 → 选**路由** → 填 `cheers.aectn.top/*`
 4. 立即生效，**DNS 记录不用动**（灰云 + 优选 IP 保持不变）
 
-**Preview URLs（预览链接）——建议开启**
+**两种「预览」功能（名字已改，别搞混）**
 
-开启后每个 PR / 分支都会生成一个独立的临时网址，不用合并就能看到真实效果，
-方便社团同学「改完先验收、确认没问题再合并」。免费，不额外消耗配额。
+| 功能 | 官方现名 | 仓库里对应 | 用途 |
+| --- | --- | --- | --- |
+| PR 预览部署 | **Previews** | `[previews]` 块（已加） | 每个 GitHub PR 生成临时网址，PR 页显示「Preview Deployments by commit」。同学改 PR→点链接验收 |
+| 版本测试链接 | **Version URLs**（原 Preview URLs） | `preview_urls = true`（已加） | 每次部署生成一个版本链接，**部署到生产前**单独看某个版本 |
 
-- 开启入口：PR 页面里那个 **Enable** 链接，或控制台 **设置** 中找「Preview URLs」
-- ⚠️ 注意：预览 URL **公开可访问**。招新官网内容本来就对外，无妨；
-  但如果某个分支上有暂不想公开的内容，别发到该分支
+两者都建议开着，免费、不额外消耗配额。
+
+- **Previews 开启**：在 GitHub PR 页面点那条 `Enable` 链接即可（已配 `[previews]` 块，部署时会自动出预览）
+- **Version URLs 开启**：Workers 和 Pages → cheers → **设置** → **域和路由** → 找 **Version URLs** → 启用。
+  若已拿到 `*.workers.dev` 地址，说明 `workers_dev` 开着，Version URLs **默认已启用**，可不动。
+- 查看 Version URL：Workers 和 Pages → cheers → **部署** → 点开某版本 → 复制链接（格式 `<前缀>-cheers.<subdomain>.workers.dev`）
+- ⚠️ 两种预览 URL **都公开可访问**；Version URL 的访问**不产生 Workers Logs**（查日志只能看生产）。
+  招新官网内容本就对外，无妨；但暂不想公开的内容别发到预览分支。
 
 **仓库信息**
 
