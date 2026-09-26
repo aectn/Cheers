@@ -16,6 +16,13 @@
 name = "cheers"
 compatibility_date = "2026-09-25"
 
+# Version URLs（原 Preview URLs）：每次 `wrangler deploy` 生成一个独立版本测试链接，
+# 部署到生产前可单独验收某个版本。workers_dev 开启时默认即为启用，
+# 这里显式写明，避免重新部署被覆盖。
+# ⚠️ 必须写在任何 [块] 之前（顶级字段）——若写在 [previews] 块内，
+#    会被解析成 previews 的子字段，wrangler 报 "Unexpected fields" 警告。
+preview_urls = true
+
 # 静态资源目录：这个文件夹里的内容会被上传到 Cloudflare
 # Mizuki(Astro) 构建产物输出到 ./dist
 [assets]
@@ -27,11 +34,6 @@ not_found_handling = "404-page"
 # 预览部署（Pull Request 场景）需要这个块，内容可以为空。
 # 缺失会导致 `npx wrangler preview` 报错：missing a `previews` block
 [previews]
-
-# Version URLs（原 Preview URLs）：每次 `wrangler deploy` 生成一个独立版本测试链接，
-# 部署到生产前可单独验收某个版本。字段名仍是历史遗留的 preview_urls。
-# workers_dev 开启时默认即为启用，这里显式写明，避免重新部署被覆盖。
-preview_urls = true
 
 # Workers Observability（可观测性 / Workers Logs）
 # 控制台已开启，这里写进配置让设置能被 Git 管理、重新部署不被覆盖。
